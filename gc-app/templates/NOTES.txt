@@ -1,0 +1,3 @@
+Bravo ! L'application est déployée !
+
+Elle est disponible à l'URI suivante : {{ .Values.host }}

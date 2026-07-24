@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bdd
+spec:
+  selector:
+    matchLabels:
+      app: gc
+      service: bdd
+      env: staging
+  template:
+    metadata:
+      labels:
+        app: gc
+        service: bdd
+        env: staging
+    spec:
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+      containers:
+        - name: postgres
+          image: postgres:17
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-data
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: bdd-secret
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: bdd
+                  name: bdd-config
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 5
+            periodSeconds: 2
+          
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 5
+            periodSeconds: 2
+          ports:
+            - containerPort: 5432
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: bdd
+spec:
+  selector:
+      app: gc
+      service: bdd
+      env: staging
+  ports:
+  - port: 5432
+    targetPort: 5432
+
+# kubectl create secret generic bdd-secret --from-literal=password=pass123

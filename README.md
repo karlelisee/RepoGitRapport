@@ -1,8 +1,5 @@
 # Rapport de cours - Cloud & Kubernetes
 
-Karl-Elisée Koffi - M1 IA, École Hexagone
-Projet : déploiement de l'application `gc` (gestion clients) sur Kubernetes
-
 ## Contexte
 
 Le but du cours était de déployer une application complète (API + web + base de données) en passant par toute la chaîne : conteneurisation, orchestration Kubernetes, packaging Helm, déploiement GitOps avec ArgoCD, et provisioning d'infra avec Terraform.
